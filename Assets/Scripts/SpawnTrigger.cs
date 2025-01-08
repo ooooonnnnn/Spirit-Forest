@@ -21,7 +21,9 @@ public class SpawnTrigger : MonoBehaviour
     
     public void OnTriggerEnter(Collider other)
     {
-        if (!triggered && other.CompareTag("Player"))
+        //test
+        print(other.tag);
+        if (!triggered && GetTopParent(other.transform).CompareTag("Player"))
         {
             //spawns all mobs in their locations
             for (int i = 0; i < mobsToSpawn.Length; i++)
@@ -32,5 +34,14 @@ public class SpawnTrigger : MonoBehaviour
             //spawning only happens once
             triggered = true;
         }
+    }
+
+    private Transform GetTopParent(Transform go)
+    {
+        if (go.parent == null)
+        {
+            return go;
+        }
+        return GetTopParent(go.parent);
     }
 }
