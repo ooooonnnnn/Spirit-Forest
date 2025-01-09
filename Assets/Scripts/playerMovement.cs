@@ -6,19 +6,34 @@ using UnityEngine;
 public class playerMovement : MonoBehaviour
 {
     [SerializeField] float speed = 1f;
-    [SerializeField] float rotationSpeed = 1f;
     [SerializeField] private Animator animator;
+    
     private int movementState = 0; //to control the animation
+
     private int startingPosition = 0; // if the starting position is 0, means the character is in the middle
     [SerializeField] float distanceOfSwipe = 2f;
     private float locationOfPlayerXaxis;
     private float locationOfPlayerYaxis;
     private float locationOfPlayerZaxis;
+    public Vector3 jump;
+    public float jumpForce = 2f;
+    public bool isGrounded;
+    Rigidbody rb;
 
 
     private void Start()
     {
+     rb = GetComponent<Rigidbody>();
         startingPosition = 0;
+        jump = new Vector3(0, 2, 0);
+    }
+    private void OnCollisionStay(Collision collision)
+    {
+        isGrounded = true;
+    }
+    private void OnCollisionExit(Collision collision)
+    {
+        isGrounded = false;
     }
     // Update is called once per frame
     void Update()
@@ -64,7 +79,14 @@ public class playerMovement : MonoBehaviour
             {
                 startingPosition--;
             }
+        
 
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("Space was pressed");
+            rb.AddForce(jump * jumpForce * Time.deltaTime, ForceMode.Impulse);
+            isGrounded = false;
         }
 
         //animation
@@ -73,6 +95,7 @@ public class playerMovement : MonoBehaviour
 
         animator.SetInteger("movementState", movementState);
     }
+    
 
 
 }
