@@ -2,12 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Splines;
+using Quaternion = System.Numerics.Quaternion;
 using Random = UnityEngine.Random;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
@@ -16,6 +14,7 @@ public class GenerationManager : MonoBehaviour
 {
     // Dynamically creates the level
     [SerializeField] private GameObject sectionPrefab;
+    [SerializeField] private GameObject toriiPrefab;
     [SerializeField] private Transform trail;
     [SerializeField] private int numSections;
     private List<GameObject> trailSections = new();
@@ -24,28 +23,45 @@ public class GenerationManager : MonoBehaviour
 	private int numAnchors;
 	[SerializeField] private float distanceBetweenAnchors;
 	[SerializeField] private float angleRange;
-	
+
+	public int currentSection = 0;
 	
 	public void Start()
 	{
 		//create an initial run of trail sections
-		Vector3 origin = Vector3.zero;
-		Vector3 direction = Vector3.forward;
 		for (int i = 0; i < numSections; i++)
 		{
-			GameObject newSection = Instantiate(sectionPrefab, trail);
-			trailSections.Add(newSection);
-			SplineContainer container = newSection.GetComponent<SplineContainer>();
-			MeshFilter meshFilter = newSection.GetComponent<MeshFilter>();
-			MeshRenderer meshRenderer = newSection.GetComponent<MeshRenderer>();
-			
-			container.Spline = i == 0
-				? NewSpline(origin, direction)
-				: NewSpline(trailSections[i - 1].GetComponent<SplineContainer>());
-			SetMeshFromSpline(container, meshFilter);
+			CreateSection();
 		}
 	}
 
+	private void CreateSection()
+	{
+		//create trail
+		GameObject newSection = Instantiate(sectionPrefab, trail);
+		trailSections.Add(newSection);
+		SplineContainer container = newSection.GetComponent<SplineContainer>();
+		MeshFilter meshFilter = newSection.GetComponent<MeshFilter>();
+			
+		container.Spline = currentSection == 0
+			? NewSpline(Vector3.zero, Vector3.forward)
+			: NewSpline(trailSections[currentSection - 1].GetComponent<SplineContainer>());
+		SetMeshFromSpline(container, meshFilter);
+
+		currentSection++;
+		
+		//add torii gates
+		int numGates = (Random.value > 0.7 ? 1 : 0) * (int)Math.Round(Random.value * 4); //1-4 gates, not every time
+		for (int i = 0; i < numGates; i++)
+		{
+			float3 position, heading;
+			container.Evaluate(0.2f * i, out position, out heading, out _);
+
+			Instantiate(toriiPrefab, position,
+				UnityEngine.Quaternion.FromToRotation(Vector3.forward, heading));
+		}
+	}
+	
 	private Spline NewSpline(SplineContainer oldSpline)
 	{
 		//makes a new SplineContainer that is tangent and congruent with another spline oldSpline
