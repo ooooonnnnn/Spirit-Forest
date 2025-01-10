@@ -84,16 +84,16 @@ public class playerMovement : MonoBehaviour
         {
             Debug.Log("Space was pressed");
             isGrounded = false;
-            rb.AddForce(jump * jumpForce * Time.deltaTime, ForceMode.Impulse);
+            rb.AddForce(jump * jumpForce, ForceMode.Impulse);
 
-            Debug.Log(isGrounded);
+            // Debug.Log(isGrounded);
 
         }
         else
         {
-            isGrounded = true;
+            //isGrounded = true;
         }
-        Debug.Log(isGrounded);
+        // Debug.Log(isGrounded);
 
 
         //animation
