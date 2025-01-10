@@ -37,7 +37,9 @@ public class GenerationManager : MonoBehaviour
 			trailSections.Add(newSection);
 			SplineContainer container = newSection.GetComponent<SplineContainer>();
 			MeshFilter meshFilter = newSection.GetComponent<MeshFilter>();
-			container.Spline = i==0 ? NewSpline(origin, direction) : NewSpline(trailSections[i-1].GetComponent<SplineContainer>());
+			container.Spline = i == 0
+				? NewSpline(origin, direction)
+				: NewSpline(trailSections[i - 1].GetComponent<SplineContainer>());
 			SetMeshFromSpline(container, meshFilter);
 		}
 	}
@@ -93,7 +95,7 @@ public class GenerationManager : MonoBehaviour
 				Vector3 ray = UnitVectorByAngle(forwards[i], Vector3.up, angle);
 
 				int vertInd = i * numVertsPerCenter + j;
-				vertices[vertInd] = (Vector3)centers[i] + ray;
+				vertices[vertInd] = (Vector3)centers[i] + SnakeToTrail(ray);
 				uvs[vertInd] = new Vector2((float)j / numVertsPerCenter, (float)i / numCenters);
 				normals[vertInd] = ray;
 			}
@@ -124,6 +126,12 @@ public class GenerationManager : MonoBehaviour
 		meshFilter.mesh = mesh;
 	}
 
+	private Vector3 SnakeToTrail(Vector3 input)
+	{
+		return new Vector3(input.x, input.y * 0.2f, input.z);
+	}
+	
+	
 	private Vector3 UnitVectorByAngle(Vector3 axis, Vector3 forward, float angle)
 	{
 		//returns a vector that is forward rotated by angle radian about up
