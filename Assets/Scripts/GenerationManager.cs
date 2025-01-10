@@ -37,6 +37,8 @@ public class GenerationManager : MonoBehaviour
 			trailSections.Add(newSection);
 			SplineContainer container = newSection.GetComponent<SplineContainer>();
 			MeshFilter meshFilter = newSection.GetComponent<MeshFilter>();
+			MeshRenderer meshRenderer = newSection.GetComponent<MeshRenderer>();
+			
 			container.Spline = i == 0
 				? NewSpline(origin, direction)
 				: NewSpline(trailSections[i - 1].GetComponent<SplineContainer>());
