@@ -75,7 +75,7 @@ public class GenerationManager : MonoBehaviour
 		
 		Mesh mesh = new Mesh();
 		
-		int numCenters = 50;
+		int numCenters = 50; //points on the curve
 		float[] positionsOnSpline = new float[numCenters];
 		for (int i = 0; i < numCenters; i++) positionsOnSpline[i] = i * 1f / (numCenters - 1);
 		float3[] centers = new float3[numCenters];
@@ -93,12 +93,12 @@ public class GenerationManager : MonoBehaviour
 
 			for (int j = 0; j < numVertsPerCenter; j++)
 			{
-				float angle = j * (2 * (float)Math.PI) / numVertsPerCenter;
+				float angle = j * (2 * (float)Math.PI) / (numVertsPerCenter - 1);
 				Vector3 ray = UnitVectorByAngle(forwards[i], Vector3.up, angle);
 
 				int vertInd = i * numVertsPerCenter + j;
 				vertices[vertInd] = (Vector3)centers[i] + SnakeToTrail(ray);
-				uvs[vertInd] = new Vector2((float)j / numVertsPerCenter, (float)i / numCenters);
+				uvs[vertInd] = new Vector2((float)j / (numVertsPerCenter - 1), (float)i / (numCenters - 1));
 				normals[vertInd] = ray;
 			}
 		}
@@ -106,16 +106,16 @@ public class GenerationManager : MonoBehaviour
 		int[] triangles = new int[(numVerts - numVertsPerCenter) * 6];
 		for (int i = 0; i < numCenters - 1; i++)
 		{
-			for (int j = 0; j < numVertsPerCenter; j++)
+			for (int j = 0; j < numVertsPerCenter - 1; j++)
 			{
 				int startInd = i * numVertsPerCenter * 6 + j * 6;
-				int nextVert = (j < numVertsPerCenter - 1) ? j + 1 : 0;
+				//int nextVert = (j < numVertsPerCenter - 1) ? j + 1 : 0;
 				triangles[startInd]     = i * numVertsPerCenter + j;
 				triangles[startInd + 1] = (i + 1) * numVertsPerCenter + j;
-				triangles[startInd + 2] = i * numVertsPerCenter + nextVert;
+				triangles[startInd + 2] = i * numVertsPerCenter + j + 1;
 				triangles[startInd + 3] = (i + 1) * numVertsPerCenter + j;
-				triangles[startInd + 4] = (i + 1) * numVertsPerCenter + nextVert;
-				triangles[startInd + 5] = i * numVertsPerCenter + nextVert;
+				triangles[startInd + 4] = (i + 1) * numVertsPerCenter + j + 1;
+				triangles[startInd + 5] = i * numVertsPerCenter + j + 1;
 			}
 		}
 		
