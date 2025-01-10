@@ -38,7 +38,7 @@ public class playerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(startingPosition);
+       // Debug.Log(startingPosition);
         locationOfPlayerXaxis = transform.position.x;
         locationOfPlayerYaxis = transform.position.y;
         locationOfPlayerZaxis = transform.position.z;
@@ -61,7 +61,7 @@ public class playerMovement : MonoBehaviour
             {
                 startingPosition++;
             }
-            Debug.Log(startingPosition);
+            
 
         }
         if (Input.GetKeyDown(KeyCode.A))
@@ -79,15 +79,22 @@ public class playerMovement : MonoBehaviour
             {
                 startingPosition--;
             }
-        
-
         }
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             Debug.Log("Space was pressed");
-            rb.AddForce(jump * jumpForce * Time.deltaTime, ForceMode.Impulse);
             isGrounded = false;
+            rb.AddForce(jump * jumpForce * Time.deltaTime, ForceMode.Impulse);
+
+            Debug.Log(isGrounded);
+
         }
+        else
+        {
+            isGrounded = true;
+        }
+        Debug.Log(isGrounded);
+
 
         //animation
         movementState = 2;
@@ -95,8 +102,9 @@ public class playerMovement : MonoBehaviour
 
         animator.SetInteger("movementState", movementState);
     }
-    
+
 
 
 }
+
 
