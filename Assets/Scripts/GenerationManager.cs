@@ -23,6 +23,7 @@ public class GenerationManager : MonoBehaviour
 	private int numAnchors;
 	[SerializeField] private float distanceBetweenAnchors;
 	[SerializeField] private float angleRange;
+	[SerializeField] private float tangentLength;
 
 	public int currentSection = 0;
 	
@@ -75,7 +76,8 @@ public class GenerationManager : MonoBehaviour
 		Spline spline = new Spline();
 		for (int i = 0; i < numAnchors; i++)
 		{
-			spline.Add(new BezierKnot(origin, -direction, direction));
+			Vector3 tangent = (Vector3)direction * tangentLength;
+			spline.Add(new BezierKnot(origin, -tangent, tangent));
 			
 			float dirChange = (Random.value - 0.5f) * angleRange * 2;
 			print(dirChange);

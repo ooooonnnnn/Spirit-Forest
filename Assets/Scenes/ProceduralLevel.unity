@@ -158,6 +158,7 @@ MonoBehaviour:
   numAnchors: 4
   distanceBetweenAnchors: 4
   angleRange: 0.2
+  tangentLength: 2
   currentSection: 0
 --- !u!4 &88552186
 Transform:
