@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Splines;
 using Quaternion = System.Numerics.Quaternion;
@@ -13,8 +15,6 @@ using Vector3 = UnityEngine.Vector3;
 public class GenerationManager : MonoBehaviour
 {
     // Dynamically creates the level
-    [SerializeField] private GameObject sectionPrefab;
-    [SerializeField] private GameObject toriiPrefab;
     [SerializeField] private Transform trail;
     [SerializeField] private int numSections;
     private List<GameObject> trailSections = new();
@@ -24,6 +24,25 @@ public class GenerationManager : MonoBehaviour
 	[SerializeField] private float distanceBetweenAnchors;
 	[SerializeField] private float angleRange;
 	[SerializeField] private float tangentLength;
+
+	[Header("Object Generation")]
+	[SerializeField] private GameObject sectionPrefab;
+	[SerializeField] private GameObject toriiPrefab;
+	[SerializeField] private GameObject treePrefab;
+	[SerializeField] private GameObject rockPrefab;
+	[SerializeField] private GameObject bushPrefab;
+	[SerializeField] private int maxNumToriiGates;
+	[SerializeField] private float chanceToriiGate;
+	[SerializeField] private float radiusAroundObjects; //to prevent overlap between objects
+	[SerializeField] private float minDistFromTrail;
+	[SerializeField] private float widthObjectField; //how far to the sides of the trail should objects spawn
+	[SerializeField] private float chanceObject;
+	[SerializeField] private int numRollsObjectSpawn; //how many times should the code attempt to spawn an object
+	private List<Transform> treePositions = new();
+	private List<Transform> rockPositions = new();
+	private List<Transform> bushPositions = new();
+	private List<Transform> toriigatePositions = new();
+	
 
 	public int currentSection = 0;
 	
@@ -52,15 +71,118 @@ public class GenerationManager : MonoBehaviour
 		currentSection++;
 		
 		//add torii gates
-		int numGates = (Random.value > 0.7 ? 1 : 0) * (int)Math.Round(Random.value * 4); //1-4 gates, not every time
+		int numGates = (Random.value < chanceToriiGate ? 1 : 0) * (int)(Math.Round(Random.value * (maxNumToriiGates - 1)) + 1); //1-x gates, not every time
 		for (int i = 0; i < numGates; i++)
 		{
 			float3 position, heading;
 			container.Evaluate(0.2f * i, out position, out heading, out _);
 
-			Instantiate(toriiPrefab, position,
-				UnityEngine.Quaternion.FromToRotation(Vector3.forward, heading));
+			toriigatePositions.Add(Instantiate(toriiPrefab, position,
+				UnityEngine.Quaternion.FromToRotation(Vector3.forward, heading)).transform);
 		}
+
+		//add trees, rocks and bushes
+		//save their positions in a map to prevent overlapping
+		
+		for (int i = 0; i < numRollsObjectSpawn; i++)
+		{
+			if (Random.value < chanceObject)
+			{
+				//determine where to spawn the new object
+				float3 positionOnCurve, tangent, upVec;
+				container.Evaluate((float)i / (numRollsObjectSpawn - 1), out positionOnCurve, out tangent, out upVec);
+				Vector3 side = Vector3.Cross(Vector3.Normalize(tangent), Vector3.Normalize(upVec));
+				float distance = math.lerp(minDistFromTrail, widthObjectField, Random.value);
+				Vector3 position = (Random.value > 0.5 ? 1 : -1) * side * distance + (Vector3)positionOnCurve;
+				
+				//determine what kind of object it is
+				ObjectType objectType;
+				switch (Random.value)
+				{
+					case < 1f/3:
+						objectType = ObjectType.Bush;
+						break;
+					case < 2f/3:
+						objectType = ObjectType.Rock;
+						break;
+					default:
+						objectType = ObjectType.Tree;
+						break;
+				}
+				
+				//determine which objects it should not interfere with
+				List<ObjectType> types = new();
+				switch (objectType)
+				{
+					case ObjectType.Bush:
+						types.Add(ObjectType.Rock);
+						break;
+					case ObjectType.Rock:
+						types.Add(ObjectType.Tree);
+						types.Add(ObjectType.Bush);
+						types.Add(ObjectType.ToriiGate);
+						break;
+					case ObjectType.Tree:
+						types.Add(ObjectType.Tree);
+						types.Add(ObjectType.Rock);
+						types.Add(ObjectType.ToriiGate);
+						break;
+				}
+				
+				//check for interference with relevant existing objects
+				bool interference = false;
+				foreach (ObjectType type in types)
+				{
+					List<Transform> objects = new();
+					switch (type)
+					{
+						case ObjectType.Bush:
+							objects = bushPositions;
+							break;
+						case ObjectType.Rock:
+							objects = rockPositions;
+							break;
+						case ObjectType.Tree:
+							objects = treePositions;
+							break;
+						case ObjectType.ToriiGate:
+							objects = toriigatePositions;
+							break;
+					}
+					if (objects.Any(t => Vector3.Distance(t.position, position) < radiusAroundObjects)) interference = true;
+				}
+				if (interference) continue;
+				
+				//no interference: place object
+				List<Transform> targetList = new();
+				GameObject targetPrefab = new();
+				switch (objectType)
+				{
+					case ObjectType.Rock:
+						targetList = rockPositions;
+						targetPrefab = rockPrefab;
+						break;
+					case ObjectType.Bush:
+						targetList = bushPositions;
+						targetPrefab = bushPrefab;
+						break;
+					case ObjectType.Tree:
+						targetList = treePositions;
+						targetPrefab = treePrefab;
+						break;
+				}
+				targetList.Add(Instantiate(targetPrefab,
+					position,
+					UnityEngine.Quaternion.AngleAxis(Random.value * (float)Math.PI, Vector3.up))
+					.transform);
+			}
+		}
+		
+	}
+	
+	private enum ObjectType
+	{
+		Rock, Tree, Bush, ToriiGate
 	}
 	
 	private Spline NewSpline(SplineContainer oldSpline)
@@ -148,13 +270,13 @@ public class GenerationManager : MonoBehaviour
 
 	private Vector3 SnakeToTrail(Vector3 input)
 	{
+		//vector transformation to turn the default tube shape into a trail shape
 		return new Vector3(input.x, input.y * 0.2f, input.z);
 	}
 	
-	
 	private Vector3 UnitVectorByAngle(Vector3 axis, Vector3 forward, float angle)
 	{
-		//returns a vector that is forward rotated by angle radian about up
+		//returns a vector that is forward rotated by angle radians about up
 		axis = axis.normalized;
 		forward = forward.normalized;
 		Vector3 side = -Vector3.Cross(axis, forward);
