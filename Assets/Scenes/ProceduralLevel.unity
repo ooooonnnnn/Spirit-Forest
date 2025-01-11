@@ -151,14 +151,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e441a0ab44148b6499deae1412e2f4c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sectionPrefab: {fileID: 5686397706347544979, guid: ac9c6f76e0a15c746bbae7b2b68d0593, type: 3}
-  toriiPrefab: {fileID: 1749489043381566822, guid: 9594bd863e978f44eb11c7722cabb61f, type: 3}
   trail: {fileID: 1996254909}
   numSections: 50
   numAnchors: 4
   distanceBetweenAnchors: 4
   angleRange: 0.2
   tangentLength: 2
+  sectionPrefab: {fileID: 5686397706347544979, guid: ac9c6f76e0a15c746bbae7b2b68d0593, type: 3}
+  toriiPrefab: {fileID: 1749489043381566822, guid: 9594bd863e978f44eb11c7722cabb61f, type: 3}
+  treePrefab: {fileID: 6709996003533682399, guid: 78c30134a5bdc34409a41da753ea6642, type: 3}
+  rockPrefab: {fileID: 5957022487915567133, guid: a0c1276d68e062847bf51ef440ff2b3b, type: 3}
+  bushPrefab: {fileID: 2572003851397077481, guid: fd0ba35c5a0be55409cc0d0048104b98, type: 3}
+  maxNumToriiGates: 4
+  chanceToriiGate: 0.3
+  radiusAroundObjects: 2
+  minDistFromTrail: 2
+  widthObjectField: 10
+  chanceObject: 0.1
+  numRollsObjectSpawn: 100
   currentSection: 0
 --- !u!4 &88552186
 Transform:
