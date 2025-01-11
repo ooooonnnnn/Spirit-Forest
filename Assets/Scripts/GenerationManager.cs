@@ -173,7 +173,7 @@ public class GenerationManager : MonoBehaviour
 				}
 				targetList.Add(Instantiate(targetPrefab,
 					position,
-					UnityEngine.Quaternion.AngleAxis(Random.value * (float)Math.PI, Vector3.up))
+					UnityEngine.Quaternion.AngleAxis(Random.value * 360, Vector3.up))
 					.transform);
 			}
 		}
