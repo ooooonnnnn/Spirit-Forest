@@ -17264,6 +17264,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 977135943453224364, guid: a0c1276d68e062847bf51ef440ff2b3b, type: 3}
   m_PrefabInstance: {fileID: 66273606}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2036504140
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2036504141}
+  m_Layer: 0
+  m_Name: wee
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2036504141
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2036504140}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -14.034859, y: -5.7070293, z: -16.034058}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &2038356630 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7562226670911324385, guid: 78c30134a5bdc34409a41da753ea6642, type: 3}
@@ -18796,3 +18827,4 @@ SceneRoots:
   - {fileID: 1919346872}
   - {fileID: 827363011}
   - {fileID: 1375540119}
+  - {fileID: 2036504141}
