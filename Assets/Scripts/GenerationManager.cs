@@ -25,12 +25,14 @@ public class GenerationManager : MonoBehaviour
 	[SerializeField] private float angleRange;
 	[SerializeField] private float tangentLength;
 
-	[Header("Object Generation")]
+	[Header("Object Prefabs")]
 	[SerializeField] private GameObject sectionPrefab;
 	[SerializeField] private GameObject toriiPrefab;
 	[SerializeField] private GameObject treePrefab;
 	[SerializeField] private GameObject rockPrefab;
 	[SerializeField] private GameObject bushPrefab;
+	
+	[Header("Object Generation")]
 	[SerializeField] private int maxNumToriiGates;
 	[SerializeField] private float chanceToriiGate;
 	[SerializeField] private float radiusAroundObjects; //to prevent overlap between objects
@@ -42,10 +44,9 @@ public class GenerationManager : MonoBehaviour
 	private List<Transform> rockPositions = new();
 	private List<Transform> bushPositions = new();
 	private List<Transform> toriigatePositions = new();
-	
 
 	public int currentSection = 0;
-	
+
 	public void Start()
 	{
 		//create an initial run of trail sections
@@ -99,10 +100,10 @@ public class GenerationManager : MonoBehaviour
 				ObjectType objectType;
 				switch (Random.value)
 				{
-					case < 1f/3:
+					case < 1f/5:
 						objectType = ObjectType.Bush;
 						break;
-					case < 2f/3:
+					case < 2f/5:
 						objectType = ObjectType.Rock;
 						break;
 					default:
@@ -202,7 +203,6 @@ public class GenerationManager : MonoBehaviour
 			spline.Add(new BezierKnot(origin, -tangent, tangent));
 			
 			float dirChange = (Random.value - 0.5f) * angleRange * 2;
-			print(dirChange);
 			direction = UnitVectorByAngle(Vector3.up, direction, dirChange);
 			origin += distanceBetweenAnchors * direction;
 		}
