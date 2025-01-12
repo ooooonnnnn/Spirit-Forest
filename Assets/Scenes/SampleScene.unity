@@ -18841,6 +18841,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1368528850276737623, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
+      propertyPath: jumpForce
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1368528850276737623, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
       propertyPath: isGrounded
       value: 0
       objectReference: {fileID: 0}
@@ -19003,6 +19007,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5167997587293153392, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8940555484719137532}
+    - targetCorrespondingSourceObject: {fileID: 5167997587293153392, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8940555484719137533}
     - targetCorrespondingSourceObject: {fileID: 6145829616365561580, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2099090071}
@@ -19064,6 +19071,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.949896, y: 1.0464637, z: 2.1835089}
   m_Center: {x: 0.0059301592, y: -1.0232319, z: 0.47738856}
+--- !u!114 &8940555484719137533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 421189924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b98a59ceb9dc99449af29bd63217333, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isColliding: 0
+  velocity: 2
+  acceleration: 1
+  groundLayer: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
