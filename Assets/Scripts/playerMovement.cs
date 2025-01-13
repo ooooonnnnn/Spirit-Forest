@@ -86,14 +86,10 @@ public class playerMovement : MonoBehaviour
             isGrounded = false;
             rb.AddForce(jump * jumpForce, ForceMode.Impulse);
 
-            // Debug.Log(isGrounded);
+            
 
         }
-        else
-        {
-            //isGrounded = true;
-        }
-        // Debug.Log(isGrounded);
+       
 
 
         //animation
