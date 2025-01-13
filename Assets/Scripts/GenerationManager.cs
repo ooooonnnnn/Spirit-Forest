@@ -49,12 +49,9 @@ public class GenerationManager : MonoBehaviour
 
 	public void Start()
 	{
-		//create an initial run of trail sections
-		for (int i = 0; i < numSections; i++)
-		{
-			CreateSection();
-		}
+		InvokeRepeating("CreateSection", 0, 1f);
 	}
+
 
 	private void CreateSection()
 	{
