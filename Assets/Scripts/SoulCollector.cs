@@ -11,7 +11,7 @@ public class SoulCollector : MonoBehaviour
             return;
         }
         Destroy(gameObject);
-        GameManager.inst.AddScore();
+        ScoreManager.inst.AddScore();
     }
     // Start is called before the first frame update
     void Start()

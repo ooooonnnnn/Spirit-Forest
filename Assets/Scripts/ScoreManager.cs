@@ -5,10 +5,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class GameManager : MonoBehaviour
+public class ScoreManager : MonoBehaviour
 {
     public int score;
-    public static GameManager inst;
+    public static ScoreManager inst;
     [SerializeField] TMP_Text scoreText;
     
     

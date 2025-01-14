@@ -49,7 +49,7 @@ public class GenerationManager : MonoBehaviour
 
 	public void Start()
 	{
-		InvokeRepeating("CreateSection", 0, 1f);
+		
 	}
 
 
