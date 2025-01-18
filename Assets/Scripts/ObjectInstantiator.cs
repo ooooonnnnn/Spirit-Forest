@@ -1,0 +1,25 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ObjectInstantiator : MonoBehaviour
+{
+    //instantiates gameobjects from a queue, with a limit on how many can be created per frame
+    public Queue<InstantiationData> goQueue = new Queue<InstantiationData>();
+    [SerializeField] private int maxInstantiationsPerFrame;
+    
+    void Update()
+    {
+        int numObjs = 0;
+        InstantiationData nextInstantiation = new InstantiationData();
+        while (numObjs <= maxInstantiationsPerFrame)
+        {
+            numObjs++;
+            if (goQueue.Count > 0)
+            {
+                 nextInstantiation = goQueue.Dequeue();
+                 Instantiate(nextInstantiation.go, nextInstantiation.pos, nextInstantiation.quaternion);
+            }
+        }
+    }
+}

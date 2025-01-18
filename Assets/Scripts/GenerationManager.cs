@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Splines;
 using Quaternion = System.Numerics.Quaternion;
 using Random = UnityEngine.Random;
@@ -40,19 +41,31 @@ public class GenerationManager : MonoBehaviour
 	[SerializeField] private float widthObjectField; //how far to the sides of the trail should objects spawn
 	[SerializeField] private float chanceObject;
 	[SerializeField] private int numRollsObjectSpawn; //how many times should the code attempt to spawn an object
-	private List<Transform> treePositions = new();
-	private List<Transform> rockPositions = new();
-	private List<Transform> bushPositions = new();
-	private List<Transform> toriigatePositions = new();
+	private List<Vector3> treePositions = new();
+	private List<Vector3> rockPositions = new();
+	private List<Vector3> bushPositions = new();
+	private List<Vector3> toriigatePositions = new();
 
 	public int currentSection = 0;
 
 	public void Start()
 	{
+		instantiationQueue = objectInstantiator.goQueue;
 		
+		InvokeRepeating(nameof(CreateSection), 0f, 1f);
 	}
 
+	
+	//test trail mesh
+	private SplineContainer testContainer;
+	private MeshFilter testMeshFilter;
+	public void Update()
+	{
+		// SetMeshFromSpline(testContainer, testMeshFilter);
+	}
 
+	[SerializeField] private ObjectInstantiator objectInstantiator;
+	private Queue<InstantiationData> instantiationQueue;
 	private void CreateSection()
 	{
 		//create trail
@@ -68,6 +81,9 @@ public class GenerationManager : MonoBehaviour
 
 		currentSection++;
 		
+		//add obstacles
+		
+		
 		//add torii gates
 		int numGates = (Random.value < chanceToriiGate ? 1 : 0) * (int)(Math.Round(Random.value * (maxNumToriiGates - 1)) + 1); //1-x gates, not every time
 		for (int i = 0; i < numGates; i++)
@@ -75,8 +91,9 @@ public class GenerationManager : MonoBehaviour
 			float3 position, heading;
 			container.Evaluate(0.2f * i, out position, out heading, out _);
 
-			toriigatePositions.Add(Instantiate(toriiPrefab, position,
-				UnityEngine.Quaternion.FromToRotation(Vector3.forward, heading)).transform);
+			instantiationQueue.Enqueue(new InstantiationData(toriiPrefab, position
+				, UnityEngine.Quaternion.FromToRotation(Vector3.forward, heading)));
+			toriigatePositions.Add(new Vector3(position.x, position.y, position.z));
 		}
 
 		//add trees, rocks and bushes
@@ -91,7 +108,7 @@ public class GenerationManager : MonoBehaviour
 				container.Evaluate((float)i / (numRollsObjectSpawn - 1), out positionOnCurve, out tangent, out upVec);
 				Vector3 side = Vector3.Cross(Vector3.Normalize(tangent), Vector3.Normalize(upVec));
 				float distance = math.lerp(minDistFromTrail, widthObjectField, Random.value);
-				Vector3 position = (Random.value > 0.5 ? 1 : -1) * side * distance + (Vector3)positionOnCurve;
+				Vector3 position = (Random.value > 0.5 ? 1 : -1) * distance * side + (Vector3)positionOnCurve;
 				
 				//determine what kind of object it is
 				ObjectType objectType;
@@ -131,7 +148,7 @@ public class GenerationManager : MonoBehaviour
 				bool interference = false;
 				foreach (ObjectType type in types)
 				{
-					List<Transform> objects = new();
+					List<Vector3> objects = new();
 					switch (type)
 					{
 						case ObjectType.Bush:
@@ -147,12 +164,12 @@ public class GenerationManager : MonoBehaviour
 							objects = toriigatePositions;
 							break;
 					}
-					if (objects.Any(t => Vector3.Distance(t.position, position) < radiusAroundObjects)) interference = true;
+					if (objects.Any(pos => Vector3.Distance(pos, position) < radiusAroundObjects)) interference = true;
 				}
 				if (interference) continue;
 				
 				//no interference: place object
-				List<Transform> targetList = new();
+				List<Vector3> targetList = new();
 				GameObject targetPrefab = new();
 				switch (objectType)
 				{
@@ -169,10 +186,11 @@ public class GenerationManager : MonoBehaviour
 						targetPrefab = treePrefab;
 						break;
 				}
-				targetList.Add(Instantiate(targetPrefab,
-					position,
-					UnityEngine.Quaternion.AngleAxis(Random.value * 360, Vector3.up))
-					.transform);
+
+				targetList.Add(new Vector3(position.x, position.y, position.z));
+				instantiationQueue.Enqueue(new InstantiationData(targetPrefab, position,
+					UnityEngine.Quaternion.AngleAxis(Random.value * 360, Vector3.up)));
+					
 			}
 		}
 		
@@ -265,10 +283,12 @@ public class GenerationManager : MonoBehaviour
 		meshFilter.mesh = mesh;
 	}
 
+	[SerializeField] private float trailMeshWidth;
+	[SerializeField] private float trailMeshHeight;
 	private Vector3 SnakeToTrail(Vector3 input)
 	{
 		//vector transformation to turn the default tube shape into a trail shape
-		return new Vector3(input.x, input.y * 0.2f, input.z);
+		return new Vector3(input.x * trailMeshWidth, input.y * trailMeshHeight, input.z);
 	}
 	
 	private Vector3 UnitVectorByAngle(Vector3 axis, Vector3 forward, float angle)
