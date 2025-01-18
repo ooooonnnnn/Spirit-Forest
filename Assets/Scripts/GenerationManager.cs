@@ -16,8 +16,11 @@ using Vector3 = UnityEngine.Vector3;
 public class GenerationManager : MonoBehaviour
 {
     // Dynamically creates the level
-    [SerializeField] private Transform trail;
-    [SerializeField] private int numSections;
+    [FormerlySerializedAs("trail")]
+    [Header("Trail Parameters")]
+    [SerializeField] private Transform trailOrigin;
+    [SerializeField] private float laneWidth;
+    // [SerializeField] private int numSections;
     private List<GameObject> trailSections = new();
 
 	[Header("Spline Parameters")] [SerializeField]
@@ -32,8 +35,15 @@ public class GenerationManager : MonoBehaviour
 	[SerializeField] private GameObject treePrefab;
 	[SerializeField] private GameObject rockPrefab;
 	[SerializeField] private GameObject bushPrefab;
+	[SerializeField] private GameObject[] obstaclePrefabs;
+
+	[Header("Obstable Generation")]
+	[SerializeField] private int numRollsObstacles; //max number of obstacles per spline unit. shouldn't be changed in runtime
+	[SerializeField] [Range(0f,1f)] public float totalObstacleChance;
+	[SerializeField] public float[] ratioObstacleChances;
+	private int[][] obstacleLaneOpts;
 	
-	[Header("Object Generation")]
+	[Header("Prop Generation")]
 	[SerializeField] private int maxNumToriiGates;
 	[SerializeField] private float chanceToriiGate;
 	[SerializeField] private float radiusAroundObjects; //to prevent overlap between objects
@@ -50,7 +60,18 @@ public class GenerationManager : MonoBehaviour
 
 	public void Start()
 	{
-		instantiationQueue = objectInstantiator.goQueue;
+		instantiationQueue = objectInstantiator.goQueue; // splitting the instantiate calls between several frames
+		
+		//hard coded obstacle lane spawn options
+		obstacleLaneOpts = new int[obstaclePrefabs.Length][];
+		obstacleLaneOpts[0] = new [] {-1, 0, 1};//grave
+		obstacleLaneOpts[1] = new [] {-1, 0, 1};//stump
+		obstacleLaneOpts[2] = new [] {-1, 1};//mushroom
+		
+		//check that the number of obstacle prefabs matches the chance ratio array length
+		if (ratioObstacleChances.Length != obstaclePrefabs.Length &&
+		    obstaclePrefabs.Length != obstacleLaneOpts.Length)
+			throw new Exception("every obstacle must be assigned a chance to appear and possible lanes");
 		
 		InvokeRepeating(nameof(CreateSection), 0f, 1f);
 	}
@@ -61,7 +82,7 @@ public class GenerationManager : MonoBehaviour
 	private MeshFilter testMeshFilter;
 	public void Update()
 	{
-		// SetMeshFromSpline(testContainer, testMeshFilter);
+		//SetMeshFromSpline(testContainer, testMeshFilter);
 	}
 
 	[SerializeField] private ObjectInstantiator objectInstantiator;
@@ -69,7 +90,7 @@ public class GenerationManager : MonoBehaviour
 	private void CreateSection()
 	{
 		//create trail
-		GameObject newSection = Instantiate(sectionPrefab, trail);
+		GameObject newSection = Instantiate(sectionPrefab, trailOrigin);
 		trailSections.Add(newSection);
 		SplineContainer container = newSection.GetComponent<SplineContainer>();
 		MeshFilter meshFilter = newSection.GetComponent<MeshFilter>();
@@ -81,9 +102,46 @@ public class GenerationManager : MonoBehaviour
 
 		currentSection++;
 		
-		//add obstacles
+		//--------------------------add obstacles--------------------------
+		for (int i = 0; i < numRollsObstacles; i++)
+		{
+			//determine whether to create an obstacle
+			if (Random.value <= totalObstacleChance)
+			{
+				float3 position, tangent, upVector;
+				container.Evaluate((float)i / numRollsObstacles, out position, out tangent, out upVector);
+				Vector3 side = Vector3.Cross(upVector, tangent).normalized;
+				
+				//choose what to instantiate
+				float cumProb = 0;
+				int chosenObstacle = -1;
+				for (int j = 0; j < obstaclePrefabs.Length; j++)
+				{
+					cumProb += ratioObstacleChances[j];
+					if (Random.value <= cumProb)
+					{
+						chosenObstacle = j;
+						break;
+					}
+				}
+				if (chosenObstacle == -1)
+				{
+					throw new Exception("total obstacle spawn chances not equal to 1");
+				}
+				
+				GameObject targetPrefab = obstaclePrefabs[chosenObstacle];
+				int numOpts = obstacleLaneOpts[chosenObstacle].Length;
+				int targetLane = obstacleLaneOpts[chosenObstacle][Random.Range(0, numOpts)];
+				
+				//add to instantiation queue
+				instantiationQueue.Enqueue(new InstantiationData(targetPrefab,
+					(Vector3)position + targetLane * laneWidth * side,
+					UnityEngine.Quaternion.FromToRotation(Vector3.forward, tangent)));
+			}
+		}
 		
 		
+		//--------------------------add props------------------------------
 		//add torii gates
 		int numGates = (Random.value < chanceToriiGate ? 1 : 0) * (int)(Math.Round(Random.value * (maxNumToriiGates - 1)) + 1); //1-x gates, not every time
 		for (int i = 0; i < numGates; i++)
@@ -101,7 +159,7 @@ public class GenerationManager : MonoBehaviour
 		
 		for (int i = 0; i < numRollsObjectSpawn; i++)
 		{
-			if (Random.value < chanceObject)
+			if (Random.value <= chanceObject)
 			{
 				//determine where to spawn the new object
 				float3 positionOnCurve, tangent, upVec;
@@ -170,7 +228,7 @@ public class GenerationManager : MonoBehaviour
 				
 				//no interference: place object
 				List<Vector3> targetList = new();
-				GameObject targetPrefab = new();
+				GameObject targetPrefab = null;
 				switch (objectType)
 				{
 					case ObjectType.Rock:

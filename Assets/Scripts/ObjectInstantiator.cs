@@ -5,7 +5,7 @@ using UnityEngine;
 public class ObjectInstantiator : MonoBehaviour
 {
     //instantiates gameobjects from a queue, with a limit on how many can be created per frame
-    public Queue<InstantiationData> goQueue = new Queue<InstantiationData>();
+    public Queue<InstantiationData> goQueue = new ();
     [SerializeField] private int maxInstantiationsPerFrame;
     
     void Update()
@@ -14,12 +14,10 @@ public class ObjectInstantiator : MonoBehaviour
         InstantiationData nextInstantiation = new InstantiationData();
         while (numObjs <= maxInstantiationsPerFrame)
         {
+            if (goQueue.Count == 0) return;
             numObjs++;
-            if (goQueue.Count > 0)
-            {
-                 nextInstantiation = goQueue.Dequeue();
-                 Instantiate(nextInstantiation.go, nextInstantiation.pos, nextInstantiation.quaternion);
-            }
+            nextInstantiation = goQueue.Dequeue();
+            Instantiate(nextInstantiation.go, nextInstantiation.pos, nextInstantiation.quaternion);
         }
     }
 }
