@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trailOrigin: {fileID: 1996254909}
-  laneWidth: 1
+  laneWidth: 2
   numAnchors: 4
   distanceBetweenAnchors: 4
   angleRange: 0.2
@@ -168,14 +168,14 @@ MonoBehaviour:
   - {fileID: 2214056612865839342, guid: 5d6bb68cbea6f754ba4217e68cccc678, type: 3}
   - {fileID: 8947073884781724942, guid: 62fab6241a720a04c84156b40e84071d, type: 3}
   numRollsObstacles: 10
-  totalObstacleChance: 1
+  totalObstacleChance: 0.297
   ratioObstacleChances:
   - 0.33333334
   - 0.33333334
   - 0.3333334
   maxNumToriiGates: 4
   chanceToriiGate: 0.3
-  radiusAroundObjects: 2
+  radiusAroundObjects: 1.55
   minDistFromTrail: 2
   widthObjectField: 50
   chanceObject: 0.1
@@ -422,7 +422,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1368528850276737623, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
       propertyPath: speed
-      value: 0
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1368528850276737623, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
+      propertyPath: distanceOfSwipe
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4829840696904848733, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
       propertyPath: m_LocalPosition.x
@@ -430,7 +434,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4829840696904848733, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 4829840696904848733, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
       propertyPath: m_LocalPosition.z
