@@ -17,6 +17,7 @@ public class playerMovement : MonoBehaviour
     
     private int movementState = 0; //to control the animation
     private float upVelocity;//current upwards velocity
+    private float currentHeight;
     [Header("Jump Parameters")]
     [SerializeField] private float gravity;
     [SerializeField] private float groundLevel;
@@ -37,10 +38,11 @@ public class playerMovement : MonoBehaviour
     {
         generationManager.InerpolateToTransform(positionInterpolant, transform); //updates parent transform (this one's) position
         UpdateLane();
-        playerTransform.localPosition = lane * laneWidth * Vector3.right;
+        Jump(); //takes player input to jump and moves player model accordingly
+        playerTransform.localPosition = lane * laneWidth * Vector3.right + currentHeight * Vector3.up;
+        
         positionInterpolant += speed * Time.deltaTime;
         
-        Jump(); //takes player input to jump and moves player model accordingly
        
         //animation
         movementState = 2;
@@ -54,11 +56,12 @@ public class playerMovement : MonoBehaviour
         {
             upVelocity = math.sqrt(2 * gravity * jumpHeight);
         }
+        currentHeight += upVelocity * Time.deltaTime;
         
         float distanceToFall;
         if (IsGrounded())
         {
-            distanceToFall = playerTransform.position.y - groundLevel;
+            distanceToFall = groundLevel - currentHeight;
             upVelocity = 0;
         }
         else
@@ -67,12 +70,12 @@ public class playerMovement : MonoBehaviour
             upVelocity -= gravity * Time.deltaTime;
         }
         
-        playerTransform.Translate(Vector3.up * distanceToFall);
+        currentHeight += distanceToFall;
     }
 
     private bool IsGrounded()
     {
-        return transform.position.y >= groundLevel;
+        return currentHeight <= groundLevel;
     }
 
     private void UpdateLane()
