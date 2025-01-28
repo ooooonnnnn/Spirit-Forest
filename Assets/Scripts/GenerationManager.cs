@@ -8,20 +8,19 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Splines;
-using Quaternion = System.Numerics.Quaternion;
 using Random = UnityEngine.Random;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
+using Quaternion = UnityEngine.Quaternion;
 
 public class GenerationManager : MonoBehaviour
 {
     // Dynamically creates the level
-    [FormerlySerializedAs("trail")]
     [Header("Trail Parameters")]
     [SerializeField] private Transform trailOrigin;
-    [SerializeField] private float laneWidth;
+    [SerializeField] public float laneWidth;
     // [SerializeField] private int numSections;
-    private List<GameObject> trailSections = new();
+    private Dictionary<int,SplineContainer> trailSections = new();
 
 	[Header("Spline Parameters")] [SerializeField]
 	private int numAnchors;
@@ -56,7 +55,7 @@ public class GenerationManager : MonoBehaviour
 	private List<Vector3> bushPositions = new();
 	private List<Vector3> toriigatePositions = new();
 
-	public int currentSection = 0;
+	private int currentSection = -1;
 
 	public void Start()
 	{
@@ -77,12 +76,36 @@ public class GenerationManager : MonoBehaviour
 	}
 
 	
-	//test trail mesh
-	private SplineContainer testContainer;
-	private MeshFilter testMeshFilter;
-	public void Update()
+	// //test trail mesh
+	// private SplineContainer testContainer;
+	// private MeshFilter testMeshFilter;
+	// public void Update()
+	// {
+	// 	//SetMeshFromSpline(testContainer, testMeshFilter);
+	// }
+
+	public void InerpolateToTransform(float t, Transform targetTransform)
 	{
-		//SetMeshFromSpline(testContainer, testMeshFilter);
+		//use interpolation value t to get a position and rotation, and write them to transform.
+		//t goes from 0 to the total number of trail sections created. 
+		InterpolateToVectors(t, out Vector3 position, out Vector3 tangent, out _);
+		targetTransform.position = position;
+		targetTransform.rotation = Quaternion.LookRotation(tangent);
+	}
+
+	private void InterpolateToVectors(float t, out Vector3 position, out Vector3 tangent, out Vector3 right)
+	{
+		//use interpolation value t to get a position, tangent, and side vectors, and write them to the out vectors.
+		//t goes from 0 to the total number of trail sections created.
+		int sectionNum = (int)t;
+		t -= sectionNum; //t from 0 to 1
+		SplineContainer section = trailSections[sectionNum];
+		
+		float3 pos, tan, up;
+		section.Evaluate(t, out pos, out tan, out up);
+		position = pos;
+		tangent = ((Vector3)tan).normalized;
+		right = Vector3.Cross(up, tan).normalized;
 	}
 
 	[SerializeField] private ObjectInstantiator objectInstantiator;
@@ -90,17 +113,16 @@ public class GenerationManager : MonoBehaviour
 	private void CreateSection()
 	{
 		//create trail
+		currentSection++;
 		GameObject newSection = Instantiate(sectionPrefab, trailOrigin);
-		trailSections.Add(newSection);
 		SplineContainer container = newSection.GetComponent<SplineContainer>();
+		trailSections.Add(currentSection, container);
 		MeshFilter meshFilter = newSection.GetComponent<MeshFilter>();
 			
 		container.Spline = currentSection == 0
 			? NewSpline(Vector3.zero, Vector3.forward)
-			: NewSpline(trailSections[currentSection - 1].GetComponent<SplineContainer>());
+			: NewSpline(trailSections[currentSection - 1]);
 		SetMeshFromSpline(container, meshFilter);
-
-		currentSection++;
 		
 		//--------------------------add obstacles--------------------------
 		for (int i = 0; i < numRollsObstacles; i++)
@@ -108,10 +130,6 @@ public class GenerationManager : MonoBehaviour
 			//determine whether to create an obstacle
 			if (Random.value <= totalObstacleChance)
 			{
-				float3 position, tangent, upVector;
-				container.Evaluate((float)i / numRollsObstacles, out position, out tangent, out upVector);
-				Vector3 side = Vector3.Cross(upVector, tangent).normalized;
-				
 				//choose what to instantiate
 				float cumProb = 0;
 				int chosenObstacle = -1;
@@ -133,10 +151,15 @@ public class GenerationManager : MonoBehaviour
 				int numOpts = obstacleLaneOpts[chosenObstacle].Length;
 				int targetLane = obstacleLaneOpts[chosenObstacle][Random.Range(0, numOpts)];
 				
+				//determine actual position
+				float interpolant = (float)i / numRollsObstacles + currentSection;
+				InterpolateToVectors(interpolant, out Vector3 position, out Vector3 tangent, out Vector3 side);
+				position += targetLane * laneWidth * side;
+				
 				//add to instantiation queue
 				instantiationQueue.Enqueue(new InstantiationData(targetPrefab,
-					(Vector3)position + targetLane * laneWidth * side,
-					UnityEngine.Quaternion.FromToRotation(Vector3.forward, tangent)));
+					position,
+					Quaternion.FromToRotation(Vector3.forward, tangent)));
 			}
 		}
 		
@@ -146,11 +169,10 @@ public class GenerationManager : MonoBehaviour
 		int numGates = (Random.value < chanceToriiGate ? 1 : 0) * (int)(Math.Round(Random.value * (maxNumToriiGates - 1)) + 1); //1-x gates, not every time
 		for (int i = 0; i < numGates; i++)
 		{
-			float3 position, heading;
-			container.Evaluate(0.2f * i, out position, out heading, out _);
+			container.Evaluate(0.2f * i, out float3 position, out float3 heading, out _);
 
 			instantiationQueue.Enqueue(new InstantiationData(toriiPrefab, position
-				, UnityEngine.Quaternion.FromToRotation(Vector3.forward, heading)));
+				, Quaternion.FromToRotation(Vector3.forward, heading)));
 			toriigatePositions.Add(new Vector3(position.x, position.y, position.z));
 		}
 
@@ -162,11 +184,10 @@ public class GenerationManager : MonoBehaviour
 			if (Random.value <= chanceObject)
 			{
 				//determine where to spawn the new object
-				float3 positionOnCurve, tangent, upVec;
-				container.Evaluate((float)i / (numRollsObjectSpawn - 1), out positionOnCurve, out tangent, out upVec);
-				Vector3 side = Vector3.Cross(Vector3.Normalize(tangent), Vector3.Normalize(upVec));
+				float interpolant = (float)i / (numRollsObjectSpawn - 1) + currentSection;
+				InterpolateToVectors(interpolant, out Vector3 positionOnCurve, out _, out Vector3 side);
 				float distance = math.lerp(minDistFromTrail, widthObjectField, Random.value);
-				Vector3 position = (Random.value > 0.5 ? 1 : -1) * distance * side + (Vector3)positionOnCurve;
+				Vector3 position = (Random.value > 0.5 ? 1 : -1) * distance * side + positionOnCurve;
 				
 				//determine what kind of object it is
 				ObjectType objectType;
