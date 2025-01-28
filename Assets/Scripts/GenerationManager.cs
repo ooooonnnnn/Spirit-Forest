@@ -320,20 +320,25 @@ public class GenerationManager : MonoBehaviour
 		Vector3[] vertices = new Vector3[numVerts];
 		Vector2[] uvs = new Vector2[numVerts];
 		Vector3[] normals = new Vector3[numVerts];
+
+		Vector3[] rays = new Vector3[numVertsPerCenter];
+		for (int i = 0; i < numVertsPerCenter; i++)
+		{
+			rays[i] = UnitVectorByAngle(Vector3.forward, Vector3.up,
+				i * (2 * (float)Math.PI) / (numVertsPerCenter - 1));
+		}
 		
 		for (int i = 0; i < numCenters; i++)
 		{
 			splineContainer.Evaluate(positionsOnSpline[i], out centers[i], out forwards[i], out _);
+			Matrix4x4 rotation = Matrix4x4.Rotate(Quaternion.FromToRotation(Vector3.forward, (Vector3)forwards[i]));
 
 			for (int j = 0; j < numVertsPerCenter; j++)
 			{
-				float angle = j * (2 * (float)Math.PI) / (numVertsPerCenter - 1);
-				Vector3 ray = UnitVectorByAngle(forwards[i], Vector3.up, angle);
-
 				int vertInd = i * numVertsPerCenter + j;
-				vertices[vertInd] = (Vector3)centers[i] + SnakeToTrail(ray);
+				vertices[vertInd] = (Vector3)centers[i] + (Vector3)(rotation * SnakeToTrail(rays[j]));
 				uvs[vertInd] = new Vector2((float)j / (numVertsPerCenter - 1), (float)i / (numCenters - 1));
-				normals[vertInd] = ray;
+				normals[vertInd] = rotation * rays[j];
 			}
 		}
 
