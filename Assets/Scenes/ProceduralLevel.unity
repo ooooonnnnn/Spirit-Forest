@@ -336,7 +336,7 @@ MonoBehaviour:
   speed: 0.5
   animator: {fileID: 1697060848}
   playerTransform: {fileID: 1697060847}
-  gravity: 9.81
+  gravity: 15
   groundLevel: 0.78
   jumpHeight: 1
   generationManager: {fileID: 88552185}
