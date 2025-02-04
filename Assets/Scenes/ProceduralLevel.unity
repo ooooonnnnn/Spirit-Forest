@@ -173,6 +173,7 @@ MonoBehaviour:
   - 0.3333333
   - 0.3333333
   - 0.3333334
+  obstacleHeight: 0.3
   maxNumToriiGates: 4
   chanceToriiGate: 0.3
   radiusAroundObjects: 2
