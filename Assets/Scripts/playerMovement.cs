@@ -1,79 +1,96 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
+using UnityEngine.Serialization;
 
 public class playerMovement : MonoBehaviour
 {
-    [SerializeField] float speed = 1f;
-    [SerializeField] float rotationSpeed = 1f;
+    //moves two transforms: one that is centered in the trail, and it's child which is the actual player model and collider 
+    
+    [SerializeField] public float speed;
     [SerializeField] private Animator animator;
+    [FormerlySerializedAs("playerModel")] [SerializeField] private Transform playerTransform;
+    
     private int movementState = 0; //to control the animation
-    private int startingPosition = 0; // if the starting position is 0, means the character is in the middle
-    [SerializeField] float distanceOfSwipe = 2f;
-    private float locationOfPlayerXaxis;
-    private float locationOfPlayerYaxis;
-    private float locationOfPlayerZaxis;
-
+    private float upVelocity;//current upwards velocity
+    private float currentHeight;
+    [Header("Jump Parameters")]
+    [SerializeField] private float gravity;
+    [SerializeField] private float groundLevel;
+    [SerializeField] private float jumpHeight;
+    
+    private int lane = 0; // if the starting position is 0, means the character is in the middle
+    [Space] 
+    [SerializeField] private GenerationManager generationManager;
+    private float laneWidth;
+    private float positionInterpolant = 0;
 
     private void Start()
     {
-        startingPosition = 0;
+        laneWidth = generationManager.laneWidth;
     }
-    // Update is called once per frame
+
     void Update()
     {
-        Debug.Log(startingPosition);
-        locationOfPlayerXaxis = transform.position.x;
-        locationOfPlayerYaxis = transform.position.y;
-        locationOfPlayerZaxis = transform.position.z;
-
-        transform.Translate(0, 0, speed * Time.deltaTime); // makes the player move forward
-
-
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            if (startingPosition == 0 || startingPosition == -1)
-            {
-                transform.position = new Vector3((float)locationOfPlayerXaxis + distanceOfSwipe, locationOfPlayerYaxis, locationOfPlayerZaxis); // go right
-
-            }
-            if (startingPosition == 0)
-            {
-                startingPosition++;
-            }
-            else if (startingPosition == -1)
-            {
-                startingPosition++;
-            }
-            Debug.Log(startingPosition);
-
-        }
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            if (startingPosition == 0 || startingPosition == 1)
-            {
-                transform.position = new Vector3((float)(locationOfPlayerXaxis - distanceOfSwipe), locationOfPlayerYaxis, locationOfPlayerZaxis); // go left
-
-            }
-            if (startingPosition == 0)
-            {
-                startingPosition--;// -1 position means the character is on the left lane
-            }
-            else if (startingPosition == 1)
-            {
-                startingPosition--;
-            }
-
-        }
-
+        generationManager.InerpolateToTransform(positionInterpolant, transform); //updates parent transform (this one's) position
+        UpdateLane();
+        Jump(); //takes player input to jump and moves player model accordingly
+        playerTransform.localPosition = lane * laneWidth * Vector3.right + currentHeight * Vector3.up;
+        
+        positionInterpolant += speed * Time.deltaTime;
+        
+       
         //animation
         movementState = 2;
-
-
         animator.SetInteger("movementState", movementState);
     }
 
 
+    private void Jump()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
+        {
+            upVelocity = math.sqrt(2 * gravity * jumpHeight);
+        }
+        currentHeight += upVelocity * Time.deltaTime;
+        
+        float distanceToFall;
+        if (IsGrounded())
+        {
+            distanceToFall = groundLevel - currentHeight;
+            upVelocity = 0;
+        }
+        else
+        {
+            distanceToFall = upVelocity * Time.deltaTime;
+            upVelocity -= gravity * Time.deltaTime;
+        }
+        
+        currentHeight += distanceToFall;
+    }
+
+    private bool IsGrounded()
+    {
+        return currentHeight <= groundLevel;
+    }
+
+    private void UpdateLane()
+    {
+        //uses player input to change lanes
+        if (Input.GetKeyDown(KeyCode.D) && lane <= 0)
+        {
+            lane++;
+        }
+
+        if (Input.GetKeyDown(KeyCode.A) && lane >= 0)
+        {
+            lane--;
+        }
+    }
 }
+
 
