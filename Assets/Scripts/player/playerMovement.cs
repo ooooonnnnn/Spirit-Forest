@@ -1,19 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.Serialization;
 
-public class playerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     //moves two transforms: one that is centered in the trail, and it's child which is the actual player model and collider 
     
     [SerializeField] public float speed;
     [SerializeField] private Animator animator;
-    [FormerlySerializedAs("playerModel")] [SerializeField] private Transform playerTransform;
+    [SerializeField] private Transform playerTransform;
     
     private int movementState = 0; //to control the animation
     private float upVelocity;//current upwards velocity
@@ -28,6 +29,9 @@ public class playerMovement : MonoBehaviour
     [SerializeField] private GenerationManager generationManager;
     private float laneWidth;
     private float positionInterpolant = 0;
+
+    [Space] 
+    [SerializeField] private AnimationCurve slowDownCurve;
 
     private void Start()
     {
@@ -49,7 +53,28 @@ public class playerMovement : MonoBehaviour
         animator.SetInteger("movementState", movementState);
     }
 
+    public void SlowDownOnHit()
+    {
+        StartCoroutine(ModifySpeedCoroutine(Time.time));
+    }
 
+    IEnumerator ModifySpeedCoroutine(float startTime)
+    {
+        while (true)
+        {
+            float timeDiff = Time.time - startTime;
+            if (timeDiff > slowDownCurve.keys.Last().time)
+            {
+                break;
+            }
+            
+            float originalSpeed = speed;
+            speed += slowDownCurve.Evaluate(timeDiff);
+            yield return new WaitForEndOfFrame();
+            speed = originalSpeed;
+        }
+    }
+    
     private void Jump()
     {
         if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
