@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public void OnObstacleHit()
     {
         health--;
-        print($"ouch, health is {health}");
+        print(health <= 0 ? "dead" : $"ouch, health is {health}");
         playerMovement.SlowDownOnHit();
     }
 }
