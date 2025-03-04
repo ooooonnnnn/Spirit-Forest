@@ -41,8 +41,9 @@ public class GenerationManager : MonoBehaviour
 	[SerializeField] [Range(0f,1f)] public float totalObstacleChance;
 	[SerializeField] public float[] ratioObstacleChances;
 	private int[][] obstacleLaneOpts;
-	
-	[Header("Prop Generation")]
+	[SerializeField] private float obstacleHeight;
+
+    [Header("Prop Generation")]
 	[SerializeField] private int maxNumToriiGates;
 	[SerializeField] private float chanceToriiGate;
 	[SerializeField] private float radiusAroundObjects; //to prevent overlap between objects
@@ -154,7 +155,7 @@ public class GenerationManager : MonoBehaviour
 				//determine actual position
 				float interpolant = (float)i / numRollsObstacles + currentSection;
 				InterpolateToVectors(interpolant, out Vector3 position, out Vector3 tangent, out Vector3 side);
-				position += targetLane * laneWidth * side;
+				position += targetLane * laneWidth * side + obstacleHeight*Vector3.up;
 				
 				//add to instantiation queue
 				instantiationQueue.Enqueue(new InstantiationData(targetPrefab,
