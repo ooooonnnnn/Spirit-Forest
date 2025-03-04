@@ -35,7 +35,7 @@ public class GenerationManager : MonoBehaviour
 	[SerializeField] private GameObject rockPrefab;
 	[SerializeField] private GameObject bushPrefab;
 	[SerializeField] private GameObject[] obstaclePrefabs;
-	[SerializeField] private GameObject[] soulPrefab;
+	//[SerializeField] private GameObject soulPrefab;
 
 	[Header("Obstable Generation")]
 	[SerializeField] private int numRollsObstacles; //max number of obstacles per spline unit. shouldn't be changed in runtime
@@ -44,13 +44,6 @@ public class GenerationManager : MonoBehaviour
 	private int[][] obstacleLaneOpts;
 	[SerializeField] private float obstacleHeight;
 
-	[Header("Soul Generation")]
-	[SerializeField] private int numRollsSouls;
-    [SerializeField][Range(0f, 1f)] public float totalSoulChance;
-	private int[][] soulLaneOpts;
-	[SerializeField] private float soulHeight;
-	[SerializeField] private int maxNumSouls;
-	private List<Vector3> soulPositions = new();
 
     [Header("Prop Generation")]
 	[SerializeField] private int maxNumToriiGates;
@@ -76,8 +69,7 @@ public class GenerationManager : MonoBehaviour
 		obstacleLaneOpts[0] = new [] {-1, 0, 1};//grave
 		obstacleLaneOpts[1] = new [] {-1, 0, 1};//stump
 		obstacleLaneOpts[2] = new [] {-1, 1};//mushroom
-		soulLaneOpts = new int[0][];
-		soulLaneOpts[0] = new[] { -1, 0, 1 }; 
+		
 		
 		//check that the number of obstacle prefabs matches the chance ratio array length
 		if (ratioObstacleChances.Length != obstaclePrefabs.Length &&
@@ -187,17 +179,6 @@ public class GenerationManager : MonoBehaviour
 				, Quaternion.FromToRotation(Vector3.forward, heading)));
 			toriigatePositions.Add(new Vector3(position.x, position.y, position.z));
 		}
-		// ------add souls
-		int numSouls = (Random.value < totalSoulChance ? 1 : 0) * (int)(Math.Round(Random.value * (maxNumSouls - 1)) + 1);
-		for (int i =0; i < numSouls; i++)
-		{
-           container.Evaluate(0.2f * i, out float3 position, out float3 heading, out _);
-           instantiationQueue.Enqueue(new InstantiationData(soulPrefab[0], position
-                , Quaternion.FromToRotation(Vector3.forward, heading)));
-			soulPositions.Add(new Vector3(position.x, position.y, position.z));
-		
-
-        }
 
         //add trees, rocks and bushes
         //save their positions in a map to prevent overlapping

@@ -179,6 +179,8 @@ GameObject:
   - component: {fileID: 88552186}
   - component: {fileID: 88552185}
   - component: {fileID: 88552187}
+  - component: {fileID: 88552188}
+  - component: {fileID: 88552189}
   m_Layer: 0
   m_Name: GenerationManager
   m_TagString: Untagged
@@ -258,6 +260,48 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxInstantiationsPerFrame: 1
+--- !u!114 &88552188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 88552184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86f6929f1c9c50e459b08b109f41e92c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectPrefabs:
+  - {fileID: 8621743937889983233, guid: 72f6b1e032c1262408ed7f54ea3546d9, type: 3}
+  - {fileID: 8621743937889983233, guid: 72f6b1e032c1262408ed7f54ea3546d9, type: 3}
+  - {fileID: 8621743937889983233, guid: 72f6b1e032c1262408ed7f54ea3546d9, type: 3}
+  - {fileID: 8621743937889983233, guid: 72f6b1e032c1262408ed7f54ea3546d9, type: 3}
+  - {fileID: 8621743937889983233, guid: 72f6b1e032c1262408ed7f54ea3546d9, type: 3}
+  - {fileID: 8621743937889983233, guid: 72f6b1e032c1262408ed7f54ea3546d9, type: 3}
+  - {fileID: 8621743937889983233, guid: 72f6b1e032c1262408ed7f54ea3546d9, type: 3}
+  - {fileID: 8621743937889983233, guid: 72f6b1e032c1262408ed7f54ea3546d9, type: 3}
+  - {fileID: 8621743937889983233, guid: 72f6b1e032c1262408ed7f54ea3546d9, type: 3}
+  - {fileID: 8621743937889983233, guid: 72f6b1e032c1262408ed7f54ea3546d9, type: 3}
+  spawnInterval: 1
+  spawnDistance: 10
+  minY: 0.5
+  maxY: 0.5
+  minX: 0
+  maxX: 0
+--- !u!114 &88552189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 88552184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d23cc1fa5bb3699438e40a68db3b66cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 10
 --- !u!1 &534512793
 GameObject:
   m_ObjectHideFlags: 0
@@ -363,7 +407,7 @@ GameObject:
   - component: {fileID: 847749001}
   m_Layer: 0
   m_Name: player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
