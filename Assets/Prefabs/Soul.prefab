@@ -4938,6 +4938,7 @@ GameObject:
   - component: {fileID: 2213976984268133008}
   - component: {fileID: -6172635941733031791}
   - component: {fileID: -5619971500322273023}
+  - component: {fileID: -1895979654396768895}
   m_Layer: 0
   m_Name: Soul
   m_TagString: Obstacle
@@ -5027,7 +5028,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -5059,3 +5060,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0
+--- !u!114 &-1895979654396768895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8621743937889983233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 665d9ef1f5a435741ba8794974088e92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

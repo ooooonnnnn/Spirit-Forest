@@ -16,7 +16,7 @@ public class ScoreManager : MonoBehaviour
     public void AddScore()
     {
         score++;
-        scoreText.text = "Score:" +score;
+        scoreText.text = "Score:" + score;
         
     }
     private void Awake()

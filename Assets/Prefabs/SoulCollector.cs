@@ -6,12 +6,12 @@ public class SoulCollector : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.name != "character")
+        if(other.gameObject.tag == "Player")
         {
-            return;
+            Destroy(gameObject);
+            ScoreManager.inst.AddScore();
         }
-        Destroy(gameObject);
-        ScoreManager.inst.AddScore();
+       
     }
     // Start is called before the first frame update
     void Start()
