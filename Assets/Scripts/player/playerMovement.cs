@@ -40,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        generationManager.InerpolateToTransform(positionInterpolant, transform); //updates parent transform (this one's) position
+        generationManager.InterpolateToTransform(positionInterpolant, transform); //updates parent transform (this one's) position
         UpdateLane();
         Jump(); //takes player input to jump and moves player model accordingly
         playerTransform.localPosition = lane * laneWidth * Vector3.right + currentHeight * Vector3.up;
