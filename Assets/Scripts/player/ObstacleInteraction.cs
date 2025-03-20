@@ -10,7 +10,7 @@ public class ObstacleInteraction : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        print("hit");
+        // print("hit");
         if (other.gameObject.CompareTag("Obstacle"))
         {
             other.enabled = false;
