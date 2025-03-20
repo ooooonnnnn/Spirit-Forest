@@ -7,6 +7,7 @@ using UnityEngine;
 public class ObstacleInteraction : MonoBehaviour
 {
     [SerializeField] private GameManager gameManager;
+    [SerializeField] private PlayerAudio playerAudio;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -15,6 +16,7 @@ public class ObstacleInteraction : MonoBehaviour
         {
             other.enabled = false;
             gameManager.OnObstacleHit();
+            playerAudio.FallSound();
         }
     }
 }
