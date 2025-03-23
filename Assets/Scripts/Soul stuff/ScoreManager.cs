@@ -11,17 +11,16 @@ public class ScoreManager : MonoBehaviour
     public static ScoreManager inst;
     [SerializeField] TMP_Text scoreText;
     
-    
-    
     public void AddScore()
     {
         score++;
-        scoreText.text = "Score:" + score;
+        scoreText.text = "Souls: " + score;
         
     }
     private void Awake()
     {
         inst = this;
+        scoreText.text = "Souls: 0";
     }
     // Start is called before the first frame update
     void Start()

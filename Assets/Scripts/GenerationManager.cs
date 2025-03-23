@@ -34,15 +34,25 @@ public class GenerationManager : MonoBehaviour
 	[SerializeField] private GameObject treePrefab;
 	[SerializeField] private GameObject rockPrefab;
 	[SerializeField] private GameObject bushPrefab;
+	[SerializeField] private GameObject soulPrefab;
 	[SerializeField] private GameObject[] obstaclePrefabs;
-	//[SerializeField] private GameObject soulPrefab;
+	[Flags] private enum ObstacleVerticalPosition
+	{
+		Bottom = 0b01,
+		Top = 0b10,
+		Both = 0b11,
+	}
+	[SerializeField] private ObstacleVerticalPosition[] heightOccupiedByObstacles; 
 
-	[Header("Obstable Generation")]
+	[Header("Obstable and collectible Generation")]
 	[SerializeField] private int numRollsObstacles; //max number of obstacles per spline unit. shouldn't be changed in runtime
 	[SerializeField] [Range(0f,1f)] public float totalObstacleChance;
-	[SerializeField] public float[] ratioObstacleChances;
+	[SerializeField] public float[] ratioObstacleChances; //the relative proportion of each type of obstacle
 	private int[][] obstacleLaneOpts;
 	[SerializeField] private float obstacleHeight;
+	[SerializeField] [Range(0f, 1f)] private float soulChance; //chance to spawn a soul 
+	[SerializeField] private float soulBaseHeight;
+	[SerializeField] private float soulHeightDelta;
 
 
     [Header("Prop Generation")]
@@ -88,7 +98,7 @@ public class GenerationManager : MonoBehaviour
 	// 	//SetMeshFromSpline(testContainer, testMeshFilter);
 	// }
 
-	public void InerpolateToTransform(float t, Transform targetTransform)
+	public void InterpolateToTransform(float t, Transform targetTransform)
 	{
 		//use interpolation value t to get a position and rotation, and write them to transform.
 		//t goes from 0 to the total number of trail sections created. 
@@ -116,7 +126,7 @@ public class GenerationManager : MonoBehaviour
 	private Queue<InstantiationData> instantiationQueue;
 	private void CreateSection()
 	{
-		//create trail
+		//-------------------------------create trail--------------------------------
 		currentSection++;
 		GameObject newSection = Instantiate(sectionPrefab, trailOrigin);
 		SplineContainer container = newSection.GetComponent<SplineContainer>();
@@ -128,15 +138,20 @@ public class GenerationManager : MonoBehaviour
 			: NewSpline(trailSections[currentSection - 1]);
 		SetMeshFromSpline(container, meshFilter);
 		
-		//--------------------------add obstacles--------------------------
+		//--------------------------add obstacles and souls--------------------------
 		for (int i = 0; i < numRollsObstacles; i++)
 		{
 			//determine whether to create an obstacle
+			bool obstacleCreated = false;
+			int targetLane = -10;
+			int chosenObstacle = -1;
 			if (Random.value <= totalObstacleChance)
 			{
+				obstacleCreated = true;
+				
 				//choose what to instantiate
 				float cumProb = 0;
-				int chosenObstacle = -1;
+				chosenObstacle = -1;
 				for (int j = 0; j < obstaclePrefabs.Length; j++)
 				{
 					cumProb += ratioObstacleChances[j];
@@ -150,10 +165,10 @@ public class GenerationManager : MonoBehaviour
 				{
 					throw new Exception("total obstacle spawn chances not equal to 1");
 				}
-				
+				// choose a lane for the new obstacle
 				GameObject targetPrefab = obstaclePrefabs[chosenObstacle];
 				int numOpts = obstacleLaneOpts[chosenObstacle].Length;
-				int targetLane = obstacleLaneOpts[chosenObstacle][Random.Range(0, numOpts)];
+				targetLane = obstacleLaneOpts[chosenObstacle][Random.Range(0, numOpts)];
 				
 				//determine actual position
 				float interpolant = (float)i / numRollsObstacles + currentSection;
@@ -162,6 +177,41 @@ public class GenerationManager : MonoBehaviour
 				
 				//add to instantiation queue
 				instantiationQueue.Enqueue(new InstantiationData(targetPrefab,
+					position,
+					Quaternion.FromToRotation(Vector3.forward, tangent)));
+			}
+			
+			// create souls
+			if (Random.value <= soulChance)
+			{
+				// determine if any space is occupied by an obstacle
+				List <(int, ObstacleVerticalPosition)> positions = new List<(int, ObstacleVerticalPosition)> 
+					{(-1, ObstacleVerticalPosition.Bottom), (-1, ObstacleVerticalPosition.Top),
+						(0, ObstacleVerticalPosition.Bottom), (0, ObstacleVerticalPosition.Top), 
+						(1, ObstacleVerticalPosition.Bottom), (1, ObstacleVerticalPosition.Top)};
+
+				if (obstacleCreated)
+				{
+					positions.RemoveAll(pos => pos.Item1 == targetLane &&
+					                           ((pos.Item2 & heightOccupiedByObstacles[chosenObstacle]) != 0));
+				}
+				
+				// choose where to create the soul
+				(int, ObstacleVerticalPosition) chosenPosition = positions[Random.Range(0, positions.Count)];
+				targetLane = chosenPosition.Item1;
+				
+				//determine actual position
+				float interpolant = (float)i / numRollsObstacles + currentSection;
+				InterpolateToVectors(interpolant, out Vector3 position, out Vector3 tangent, out Vector3 side);
+				position += targetLane * laneWidth * side +
+				            Vector3.up * (
+					            chosenPosition.Item2 == ObstacleVerticalPosition.Top
+						            ? soulBaseHeight + soulHeightDelta
+						            : soulBaseHeight
+				            );
+				
+				//add to instantiation queue
+				instantiationQueue.Enqueue(new InstantiationData(soulPrefab,
 					position,
 					Quaternion.FromToRotation(Vector3.forward, tangent)));
 			}
