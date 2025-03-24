@@ -48,7 +48,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        
         generationManager.InterpolateToTransform(positionInterpolant, transform); //updates parent transform (this one's) position
         UpdateLane();
         Jump(); //takes player input to jump and moves player model accordingly

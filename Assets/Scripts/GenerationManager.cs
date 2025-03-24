@@ -2,11 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Splines;
 using Random = UnityEngine.Random;
 using Vector2 = UnityEngine.Vector2;
@@ -44,7 +41,7 @@ public class GenerationManager : MonoBehaviour
 	}
 	[SerializeField] private ObstacleVerticalPosition[] heightOccupiedByObstacles; 
 
-	[Header("Obstable and collectible Generation")]
+	[Header("Obstacle and collectible Generation")]
 	[SerializeField] private int numRollsObstacles; //max number of obstacles per spline unit. shouldn't be changed in runtime
 	[SerializeField] [Range(0f,1f)] public float totalObstacleChance;
 	[SerializeField] public float[] ratioObstacleChances; //the relative proportion of each type of obstacle

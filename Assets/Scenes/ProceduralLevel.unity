@@ -445,7 +445,7 @@ MonoBehaviour:
   laneWidth: 1
   numAnchors: 4
   distanceBetweenAnchors: 4
-  angleRange: 0.2
+  angleRange: 0.05
   tangentLength: 2
   sectionPrefab: {fileID: 5686397706347544979, guid: ac9c6f76e0a15c746bbae7b2b68d0593, type: 3}
   toriiPrefab: {fileID: 1749489043381566822, guid: 9594bd863e978f44eb11c7722cabb61f, type: 3}
