@@ -1499,7 +1499,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7486707007264964188}
   - component: {fileID: 3123699787444611147}
-  - component: {fileID: 13787453365834610}
   m_Layer: 0
   m_Name: Mushroom
   m_TagString: Enemy
@@ -1548,15 +1547,3 @@ CapsuleCollider:
   m_Height: 3.4
   m_Direction: 1
   m_Center: {x: 0, y: 0.6, z: 0}
---- !u!114 &13787453365834610
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8947073884781724942}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ca9f63e7eb55aa448c9e5e0a84a8879, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
