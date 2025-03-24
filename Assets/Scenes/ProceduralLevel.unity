@@ -1854,6 +1854,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 82613245}
     - target: {fileID: 2325380643941984110, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 1697060848}
+    - target: {fileID: 2325380643941984110, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
       propertyPath: colorFull.a
       value: 1
       objectReference: {fileID: 0}

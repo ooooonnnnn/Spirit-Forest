@@ -16,6 +16,9 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private Color colorFull;
     [SerializeField] private Image cooldownImage;
 
+    [Header("Animation")] 
+    [SerializeField] private Animator animator;
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
@@ -46,6 +49,8 @@ public class PlayerAttack : MonoBehaviour
 
         StartCoroutine(Attack());
         timer = cooldown;
+        animator.SetTrigger("Attack");
+        animator.SetLayerWeight(1,1);
     }
 
     IEnumerator Attack()
@@ -67,5 +72,10 @@ public class PlayerAttack : MonoBehaviour
 
             yield return new WaitForEndOfFrame();
         }
+    }
+
+    public void ResetAnimatorState()
+    {
+        animator.SetLayerWeight(1,0);
     }
 }
