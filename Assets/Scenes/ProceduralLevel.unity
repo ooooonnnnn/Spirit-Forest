@@ -466,8 +466,8 @@ MonoBehaviour:
   - 0.3333334
   obstacleHeight: 0.3
   soulChance: 0.573
-  soulBaseHeight: 0.6
-  soulHeightDelta: 3
+  soulBaseHeight: 1
+  soulHeightDelta: 2
   maxNumToriiGates: 4
   chanceToriiGate: 0.3
   radiusAroundObjects: 2
