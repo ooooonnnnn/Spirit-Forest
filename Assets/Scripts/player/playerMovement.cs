@@ -59,6 +59,7 @@ public class PlayerMovement : MonoBehaviour
         //animation
         movementState = 2;
         animator.SetInteger("movementState", movementState);
+
     }
     
     IEnumerator SpeedUp()

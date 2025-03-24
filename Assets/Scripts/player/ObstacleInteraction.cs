@@ -12,7 +12,7 @@ public class ObstacleInteraction : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // print("hit");
-        if (other.gameObject.CompareTag("Obstacle"))
+        if (other.gameObject.CompareTag("Obstacle")||other.gameObject.CompareTag("Enemy"))
         {
             other.enabled = false;
             gameManager.OnObstacleHit();
