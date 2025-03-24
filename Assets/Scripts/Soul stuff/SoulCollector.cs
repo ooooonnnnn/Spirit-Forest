@@ -8,7 +8,9 @@ public class SoulCollector : MonoBehaviour
     {
         if(other.gameObject.CompareTag( "Player"))
         {
+            transform.Find("Fire").GetComponent<DeleteAfter>().AboutToDie();
             Destroy(gameObject);
+            //Destroy(gameObject);
             ScoreManager.inst.AddScore();
         }
        
