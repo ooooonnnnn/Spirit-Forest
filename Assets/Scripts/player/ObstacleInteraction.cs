@@ -8,7 +8,7 @@ public class ObstacleInteraction : MonoBehaviour
 {
     [SerializeField] private GameManager gameManager;
     [SerializeField] private PlayerAudio playerAudio;
-
+    
     private void OnTriggerEnter(Collider other)
     {
         // print("hit");
@@ -18,5 +18,10 @@ public class ObstacleInteraction : MonoBehaviour
             gameManager.OnObstacleHit();
             playerAudio.FallSound();
         }
+    }
+
+    private void Start()
+    {
+        //do nothing, this only exist so the enable checkbox appears in the inspector
     }
 }
