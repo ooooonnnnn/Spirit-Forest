@@ -828,7 +828,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 847749000}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a02cd0d600ca1564699adaa65bdd9453, type: 3}
   m_Name: 
@@ -1473,7 +1473,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ca9f63e7eb55aa448c9e5e0a84a8879, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mushroom: {fileID: 8947073884781724942, guid: 62fab6241a720a04c84156b40e84071d, type: 3}
 --- !u!1 &1432774406
 GameObject:
   m_ObjectHideFlags: 0
