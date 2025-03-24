@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerAttack : MonoBehaviour
 {
@@ -9,6 +10,11 @@ public class PlayerAttack : MonoBehaviour
     private float timer;
     [SerializeField] private float distance; //distance of raycast
     [SerializeField] private float duration; //how long the attack lasts when initiated
+
+    [Header("UI")] 
+    [SerializeField] private Color colorEmpty;
+    [SerializeField] private Color colorFull;
+    [SerializeField] private Image cooldownImage;
 
     private void Update()
     {
@@ -18,14 +24,28 @@ public class PlayerAttack : MonoBehaviour
         }
 
         timer -= Time.deltaTime;
-        if (timer <= 0) timer = cooldown;
+        if (timer < 0) timer = 0;
+        
+        //update graphic
+        if (timer <= 0)
+        {
+            cooldownImage.color = colorFull;
+            cooldownImage.fillAmount = 1;
+        }
+        else
+        {
+            cooldownImage.color = colorEmpty;
+            cooldownImage.fillAmount = (cooldown - timer) / cooldown;
+        }
+
     }
 
     private void TryAttack()
     {
-        if (timer <= 0) return;
+        if (timer > 0) return;
 
         StartCoroutine(Attack());
+        timer = cooldown;
     }
 
     IEnumerator Attack()
