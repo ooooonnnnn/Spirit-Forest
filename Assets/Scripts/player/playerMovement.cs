@@ -36,21 +36,33 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         laneWidth = generationManager.laneWidth;
+        StartCoroutine(SpeedUp());
     }
 
     void Update()
     {
+        
         generationManager.InterpolateToTransform(positionInterpolant, transform); //updates parent transform (this one's) position
         UpdateLane();
         Jump(); //takes player input to jump and moves player model accordingly
         playerTransform.localPosition = lane * laneWidth * Vector3.right + currentHeight * Vector3.up;
         
         positionInterpolant += speed * Time.deltaTime;
-        
-       
+
+
         //animation
         movementState = 2;
         animator.SetInteger("movementState", movementState);
+    }
+    IEnumerator SpeedUp()
+    {
+        float maxSpeed = 1.2f;
+        while (true)
+        {
+            if(speed < maxSpeed)
+            speed += 0.02f;
+            yield return new WaitForSeconds(2f);
+        }
     }
 
     public void SlowDownOnHit()
