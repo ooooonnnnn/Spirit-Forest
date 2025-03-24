@@ -33,10 +33,17 @@ public class PlayerMovement : MonoBehaviour
     [Space] 
     [SerializeField] private AnimationCurve slowDownCurve;
 
+    [Header("Dynamic Speed")] 
+    [SerializeField] private float speedUpInterval;
+    [SerializeField] private float speedUpAmount;
+    [SerializeField] private float maxSpeed;
+    [SerializeField] private float initialSpeed;
+
     private void Start()
     {
         laneWidth = generationManager.laneWidth;
         StartCoroutine(SpeedUp());
+        speed = initialSpeed;
     }
 
     void Update()
@@ -54,14 +61,13 @@ public class PlayerMovement : MonoBehaviour
         movementState = 2;
         animator.SetInteger("movementState", movementState);
     }
+    
     IEnumerator SpeedUp()
     {
-        float maxSpeed = 1.2f;
-        while (true)
+        while (speed < maxSpeed)
         {
-            if(speed < maxSpeed)
-            speed += 0.02f;
-            yield return new WaitForSeconds(2f);
+            speed += speedUpAmount;
+            yield return new WaitForSeconds(speedUpInterval);
         }
     }
 

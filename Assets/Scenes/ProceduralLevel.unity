@@ -390,7 +390,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 3
-  playerMovement: {fileID: 847749001}
+  playerMovement: {fileID: 847749003}
   playerAnimator: {fileID: 1697060848}
   ingameInfoCanvas: {fileID: 1550029893}
   healthText: {fileID: 13279296}
@@ -466,8 +466,8 @@ MonoBehaviour:
   - 0.3333334
   obstacleHeight: 0.3
   soulChance: 0.573
-  soulBaseHeight: 1
-  soulHeightDelta: 1
+  soulBaseHeight: 0.6
+  soulHeightDelta: 3
   maxNumToriiGates: 4
   chanceToriiGate: 0.3
   radiusAroundObjects: 2
@@ -742,7 +742,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 847749002}
-  - component: {fileID: 847749001}
+  - component: {fileID: 847749003}
   m_Layer: 0
   m_Name: player
   m_TagString: Player
@@ -750,58 +750,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &847749001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 847749000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 902f450166d200e4482846bb00a3d2ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 0.2
-  animator: {fileID: 1697060848}
-  playerTransform: {fileID: 1697060847}
-  gravity: 15
-  groundLevel: 0.78
-  jumpHeight: 1
-  generationManager: {fileID: 88552185}
-  slowDownCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0.009614229
-      inSlope: -3.1100717
-      outSlope: -3.1100717
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.033872902
-      value: -0.09573293
-      inSlope: 0.043742754
-      outSlope: 0.043742754
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.23226663
-    - serializedVersion: 3
-      time: 3.9958844
-      value: 0.008038759
-      inSlope: 0.026191667
-      outSlope: 0.026191667
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!4 &847749002
 Transform:
   m_ObjectHideFlags: 0
@@ -819,6 +767,53 @@ Transform:
   - {fileID: 1697060847}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &847749003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847749000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 902f450166d200e4482846bb00a3d2ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0.5
+  animator: {fileID: 1697060848}
+  playerTransform: {fileID: 1697060847}
+  gravity: 15
+  groundLevel: 1
+  jumpHeight: 1
+  generationManager: {fileID: 88552185}
+  slowDownCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.0042114183
+      value: -0.18803015
+      inSlope: 0.17098632
+      outSlope: 0.17098632
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1.0018005
+      value: -0.017456055
+      inSlope: 0.17098632
+      outSlope: 0.17098632
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  speedUpInterval: 2
+  speedUpAmount: 0.02
+  maxSpeed: 1.2
+  initialSpeed: 0.3
 --- !u!1 &856878073
 GameObject:
   m_ObjectHideFlags: 0
