@@ -73,7 +73,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void SlowDownOnHit()
     {
-        StartCoroutine(ModifySpeedCoroutine(Time.time));
+        StartCoroutine(ModifySpeedCoroutine(startTime: Time.time));
     }
 
     IEnumerator ModifySpeedCoroutine(float startTime)
@@ -87,7 +87,7 @@ public class PlayerMovement : MonoBehaviour
             }
             
             float originalSpeed = speed;
-            speed += slowDownCurve.Evaluate(timeDiff);
+            speed *= slowDownCurve.Evaluate(timeDiff);
             yield return new WaitForEndOfFrame();
             speed = originalSpeed;
         }
