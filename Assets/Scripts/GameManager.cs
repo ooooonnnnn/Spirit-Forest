@@ -51,4 +51,14 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene("ProceduralLevel");
     }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
+    public void MainMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
 }
