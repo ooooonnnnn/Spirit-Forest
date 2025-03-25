@@ -4,6 +4,7 @@ using TMPro.Examples;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 public class ScoreManager : MonoBehaviour
 {
@@ -15,8 +16,16 @@ public class ScoreManager : MonoBehaviour
     {
         score++;
         scoreText.text = "Souls: " + score;
-        
     }
+
+    public void AddScore(int score)
+    {
+        for (int i = 0; i < score; i++)
+        {
+            AddScore();
+        }
+    }
+    
     private void Awake()
     {
         inst = this;

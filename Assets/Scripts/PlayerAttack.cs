@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class PlayerAttack : MonoBehaviour
 {
+    [Header("Parameters")]
     [SerializeField] private float cooldown; //time between attacks
     private float timer;
     [SerializeField] private float distance; //distance of raycast
@@ -18,6 +19,10 @@ public class PlayerAttack : MonoBehaviour
 
     [Header("Animation")] 
     [SerializeField] private Animator animator;
+
+    [Header("Score")] 
+    [SerializeField] private int soulsPerKill;
+    [SerializeField] private ScoreManager manager;
 
     private void Update()
     {
@@ -65,6 +70,7 @@ public class PlayerAttack : MonoBehaviour
                 if (other.CompareTag("Enemy"))
                 {
                     Destroy(other);
+                    manager.AddScore(soulsPerKill);
                 }
             }
             

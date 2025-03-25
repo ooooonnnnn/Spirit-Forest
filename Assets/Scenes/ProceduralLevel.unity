@@ -460,13 +460,13 @@ MonoBehaviour:
   - {fileID: 8947073884781724942, guid: 62fab6241a720a04c84156b40e84071d, type: 3}
   heightOccupiedByObstacles: 01000000ffffffff01000000
   numRollsObstacles: 3
-  totalObstacleChance: 0.146
+  totalObstacleChance: 0.51
   ratioObstacleChances:
   - 0.3333333
   - 0.3333333
   - 0.3333334
   obstacleHeight: 0.3
-  soulChance: 0.573
+  soulChance: 0.2
   soulBaseHeight: 1
   soulHeightDelta: 2
   maxNumToriiGates: 1
@@ -506,7 +506,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c66e43d735eb51429790fab7f526513, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxInstantiationsPerFrame: 2
+  maxInstantiationsPerFrame: 1
   initialNumObjs: 500
 --- !u!1 &261237897
 GameObject:
@@ -887,7 +887,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  speedUpInterval: 2
+  speedUpInterval: 4
   speedUpAmount: 0.02
   maxSpeed: 1.2
   initialSpeed: 0.3
@@ -1856,6 +1856,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 82613245}
     - target: {fileID: 2325380643941984110, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
+      propertyPath: manager
+      value: 
+      objectReference: {fileID: 1432774407}
+    - target: {fileID: 2325380643941984110, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
       propertyPath: animator
       value: 
       objectReference: {fileID: 1697060848}
@@ -1890,6 +1894,10 @@ PrefabInstance:
     - target: {fileID: 2325380643941984110, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
       propertyPath: colorEmpty.r
       value: 0.5320754
+      objectReference: {fileID: 0}
+    - target: {fileID: 2325380643941984110, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
+      propertyPath: soulsPerKill
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2325380643941984110, guid: 44df1af1262f7474e90d5a6cd05c7eba, type: 3}
       propertyPath: cooldownImage
