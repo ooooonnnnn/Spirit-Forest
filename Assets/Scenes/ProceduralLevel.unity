@@ -443,6 +443,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   trailOrigin: {fileID: 1996254909}
   laneWidth: 1
+  numInitailSections: 10
   numAnchors: 4
   distanceBetweenAnchors: 4
   angleRange: 0.05
@@ -505,7 +506,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c66e43d735eb51429790fab7f526513, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxInstantiationsPerFrame: 1
+  maxInstantiationsPerFrame: 2
+  initialNumObjs: 500
 --- !u!1 &261237897
 GameObject:
   m_ObjectHideFlags: 0

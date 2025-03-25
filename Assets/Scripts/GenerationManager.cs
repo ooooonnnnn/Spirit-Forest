@@ -18,6 +18,7 @@ public class GenerationManager : MonoBehaviour
     [SerializeField] public float laneWidth;
     // [SerializeField] private int numSections;
     private Dictionary<int,SplineContainer> trailSections = new();
+    [SerializeField] private int numInitailSections;
 
 	[Header("Spline Parameters")] [SerializeField]
 	private int numAnchors;
@@ -83,7 +84,13 @@ public class GenerationManager : MonoBehaviour
 		    obstaclePrefabs.Length != obstacleLaneOpts.Length)
 			throw new Exception("every obstacle must be assigned a chance to appear and possible lanes");
 		
-		InvokeRepeating(nameof(CreateSection), 0f, 1f);
+		//initially create a few trail sections
+		for (int i = 0; i < numInitailSections; i++)
+		{
+			CreateSection();
+		}
+		//create a new section every 0.5 seconds
+		InvokeRepeating(nameof(CreateSection), 0f, 0.5f);
 	}
 
 	
@@ -125,6 +132,7 @@ public class GenerationManager : MonoBehaviour
 	{
 		//-------------------------------create trail--------------------------------
 		currentSection++;
+		print("Current section" + currentSection);
 		GameObject newSection = Instantiate(sectionPrefab, trailOrigin);
 		SplineContainer container = newSection.GetComponent<SplineContainer>();
 		trailSections.Add(currentSection, container);
@@ -235,8 +243,18 @@ public class GenerationManager : MonoBehaviour
 			if (Random.value <= chanceObject)
 			{
 				//determine where to spawn the new object
-				float interpolant = (float)i / (numRollsObjectSpawn - 1) + currentSection;
-				InterpolateToVectors(interpolant, out Vector3 positionOnCurve, out _, out Vector3 side);
+				float interpolant = (float)i / numRollsObjectSpawn + currentSection;
+				Vector3 side;
+				Vector3 positionOnCurve;
+				// try
+				// {
+					InterpolateToVectors(interpolant, out positionOnCurve, out _, out side);
+				// }
+				// catch (Exception e)
+				// {
+				// 	Debug.LogException(e);
+				// 	continue;
+				// }
 				float distance = math.lerp(minDistFromTrail, widthObjectField, Random.value);
 				Vector3 position = (Random.value > 0.5 ? 1 : -1) * distance * side + positionOnCurve;
 				

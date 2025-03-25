@@ -11,8 +11,8 @@ public class PlaneBoundary : MonoBehaviour
     private void Start()
     {
         //test
-        print((Vector3)(Vector2)Vector2Int.down);
-        print(Vector2Int.down);
+        // print((Vector3)(Vector2)Vector2Int.down);
+        // print(Vector2Int.down);
         
         HashSet<Vector3Int> allowedDirs = new HashSet<Vector3Int>
             { Vector3Int.forward, Vector3Int.back, Vector3Int.left, Vector3Int.right };
